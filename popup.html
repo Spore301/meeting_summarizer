@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Meeting Summarizer</title>
+  <style>
+    body { font-family: sans-serif; width: 300px; padding: 10px; }
+    h1 { font-size: 16px; color: #333; }
+    #controls, #header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    #recordingsList { max-height: 300px; overflow-y: auto; border-top: 1px solid #ccc; }
+    .recording-item { padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .recording-item button { cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div id="controls">
+    <button id="startButton">Start Recording</button>
+    <button id="stopButton">Stop Recording</button>
+  </div>
+  <hr>
+  <div id="header">
+    <h3>Saved Recordings</h3>
+    <button id="refreshButton">Refresh</button>
+  </div>
+  <div id="recordingsList">
+    <p>Click Refresh to see your recordings.</p>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
