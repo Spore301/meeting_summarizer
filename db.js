@@ -1,6 +1,6 @@
 const DB_NAME = 'meeting-summarizer-db';
 const STORE_NAME = 'recordings';
-const DB_VERSION = 2; // Version incremented to add new data fields
+const DB_VERSION = 3; // **1. Increment the version number to 3**
 
 function initDB() {
   return new Promise((resolve, reject) => {
@@ -13,9 +13,11 @@ function initDB() {
 
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        const store = db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
-        store.createIndex('createdAt', 'createdAt', { unique: false });
+      const store = event.target.transaction.objectStore(STORE_NAME);
+      
+      // **2. Add a new 'index' for the 'size' property**
+      if (!store.indexNames.contains('size')) {
+        store.createIndex('size', 'size', { unique: false });
       }
     };
 
@@ -30,10 +32,13 @@ export async function saveRecording(blob) {
   return new Promise((resolve, reject) => {
     const transaction = db.transaction([STORE_NAME], 'readwrite');
     const store = transaction.objectStore(STORE_NAME);
+
     const recording = {
       blob: blob,
       createdAt: new Date(),
+      size: blob.size // **3. Add the blob's size to the saved object**
     };
+
     const request = store.add(recording);
 
     request.onsuccess = (event) => {
@@ -48,6 +53,8 @@ export async function saveRecording(blob) {
   });
 }
 
+// ... (the rest of the functions: getRecordings, getRecordingById, updateRecording)
+//     ... remain exactly the same.
 export async function getRecordings() {
   const db = await initDB();
   return new Promise((resolve, reject) => {

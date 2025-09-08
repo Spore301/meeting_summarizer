@@ -35,24 +35,28 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Sort to show the newest recordings first
     recordings.sort((a, b) => b.id - a.id);
 
     recordings.forEach(rec => {
       const recordingItem = document.createElement('div');
       recordingItem.className = 'recording-item';
+      
       const recordingDate = new Date(rec.createdAt).toLocaleString();
+      
+      // **KEY CHANGE IS HERE**
+      // Format the size from bytes to KB for display
+      const sizeInKB = rec.size ? `${Math.round(rec.size / 1024)} KB` : '';
 
       let actionButton;
-      // Conditionally show "Summarize" or "Transcribe" button
       if (rec.transcript) {
         actionButton = `<button class="summarize-button" data-id="${rec.id}">Summarize</button>`;
       } else {
         actionButton = `<button class="transcribe-button" data-id="${rec.id}">Transcribe</button>`;
       }
 
+      // Updated to include the sizeInKB variable
       recordingItem.innerHTML = `
-        <span>Recording ${rec.id} - ${recordingDate}</span>
+        <span>Recording ${rec.id} - ${recordingDate} - <strong>${sizeInKB}</strong></span>
         ${actionButton}
       `;
       recordingsList.appendChild(recordingItem);
@@ -79,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Listen for completion messages from the background script
   chrome.runtime.onMessage.addListener((message) => {
     if (message.action === 'transcriptionComplete' || message.action === 'summarizationComplete') {
-        // Refresh the list to update the button states
         refreshRecordingsList();
     }
   });
