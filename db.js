@@ -1,9 +1,10 @@
 const DB_NAME = 'meeting-summarizer-db';
 const STORE_NAME = 'recordings';
+const DB_VERSION = 2; // Version incremented to add new data fields
 
 function initDB() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, 1);
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
 
     request.onerror = (event) => {
       console.error('Database error:', event.target.error);
@@ -78,6 +79,32 @@ export async function getRecordingById(id) {
 
     request.onerror = (event) => {
       reject('Error fetching recording by ID');
+    };
+  });
+}
+
+export async function updateRecording(id, newData) {
+  const db = await initDB();
+  return new Promise(async (resolve, reject) => {
+    const record = await getRecordingById(id);
+    if (!record) {
+      return reject('Record not found to update');
+    }
+    
+    const transaction = db.transaction([STORE_NAME], 'readwrite');
+    const store = transaction.objectStore(STORE_NAME);
+    
+    const updatedRecord = { ...record, ...newData, updatedAt: new Date() };
+    const request = store.put(updatedRecord);
+
+    request.onsuccess = () => {
+      console.log(`Recording ${id} updated successfully.`);
+      resolve(request.result);
+    };
+
+    request.onerror = (event) => {
+      console.error('Error updating recording:', event.target.error);
+      reject('Error updating recording');
     };
   });
 }

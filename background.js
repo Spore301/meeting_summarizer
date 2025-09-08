@@ -1,4 +1,4 @@
-import { saveRecording, getRecordings, getRecordingById } from './db.js';
+import { saveRecording, getRecordings, getRecordingById, updateRecording } from './db.js';
 
 const OFFSCREEN_DOCUMENT_PATH = '/offscreen.html';
 
@@ -16,7 +16,6 @@ async function setupOffscreenDocument() {
   });
 }
 
-// Converts a base64 string from offscreen.js back into a real Blob
 function base64ToBlob(dataUrl, mimeType) {
   const byteCharacters = atob(dataUrl.split(',')[1]);
   const byteNumbers = new Array(byteCharacters.length);
@@ -38,7 +37,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     
     case 'saveRecording':
       if (message.data) {
-        // Reconstruct the blob from the base64 Data URL
         const mimeType = message.data.match(/:(.*?);/)[1];
         const blob = base64ToBlob(message.data, mimeType);
         saveRecording(blob);
@@ -57,7 +55,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
-// Converts a Blob to a base64 string for the API call
 function blobToBase64(blob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -102,7 +99,7 @@ async function handleTranscription(recordingId) {
         contents: [
           {
             parts: [
-              { text: "Transcribe the following audio:" },
+              { text: "This is a video file, but please ignore the video content. Your task is to transcribe only the audio track. Provide a clean, verbatim transcript of all spoken words in the audio." },
               { inline_data: { mime_type: "video/webm", data: audioBase64 } }
             ]
           }
@@ -118,9 +115,12 @@ async function handleTranscription(recordingId) {
     const result = await response.json();
     const transcript = result.candidates[0].content.parts[0].text;
     
-    console.log("7. SUCCESS! Transcript received.");
-    console.log(`--- TRANSCRIPT for Recording ${recordingId} ---`);
-    console.log(transcript);
+    // **KEY CHANGE IS HERE**
+    console.log("7. SUCCESS! Transcript received. Saving to database...");
+    await updateRecording(recordingId, { transcript: transcript });
+    
+    // Notify the popup UI that the transcription is complete
+    chrome.runtime.sendMessage({ action: 'transcriptionComplete', id: recordingId });
 
   } catch (error) {
     console.error('--- A CRITICAL ERROR OCCURRED ---');
