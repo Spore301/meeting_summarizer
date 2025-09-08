@@ -1,6 +1,6 @@
 const DB_NAME = 'meeting-summarizer-db';
 const STORE_NAME = 'recordings';
-const DB_VERSION = 3; // **1. Increment the version number to 3**
+const DB_VERSION = 3; 
 
 function initDB() {
   return new Promise((resolve, reject) => {
@@ -13,9 +13,17 @@ function initDB() {
 
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
-      const store = event.target.transaction.objectStore(STORE_NAME);
       
-      // **2. Add a new 'index' for the 'size' property**
+      let store;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        store = db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+      } else {
+        store = event.target.transaction.objectStore(STORE_NAME);
+      }
+      
+      if (!store.indexNames.contains('createdAt')) {
+        store.createIndex('createdAt', 'createdAt', { unique: false });
+      }
       if (!store.indexNames.contains('size')) {
         store.createIndex('size', 'size', { unique: false });
       }
@@ -36,7 +44,7 @@ export async function saveRecording(blob) {
     const recording = {
       blob: blob,
       createdAt: new Date(),
-      size: blob.size // **3. Add the blob's size to the saved object**
+      size: blob.size
     };
 
     const request = store.add(recording);
@@ -53,8 +61,6 @@ export async function saveRecording(blob) {
   });
 }
 
-// ... (the rest of the functions: getRecordings, getRecordingById, updateRecording)
-//     ... remain exactly the same.
 export async function getRecordings() {
   const db = await initDB();
   return new Promise((resolve, reject) => {

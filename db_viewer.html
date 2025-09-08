@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Database Viewer</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    h1 { color: #333; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+    th { background-color: #f2f2f2; }
+    tr:nth-child(even) { background-color: #f9f9f9; }
+    td button { cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Meeting Summarizer - Database Viewer</h1>
+  <button id="refreshButton">Refresh Data</button>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Created At</th>
+        <th>Size (KB)</th>
+        <th>Has Transcript?</th>
+        <th>Has Summary?</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="dbData">
+      </tbody>
+  </table>
+
+  <script type="module" src="db_viewer.js"></script>
+</body>
+</html>

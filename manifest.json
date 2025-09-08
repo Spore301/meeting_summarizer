@@ -5,7 +5,7 @@
   "description": "Record, transcribe, and summarize meetings from your browser.",
   "permissions": [
     "storage",
-    "offscreen"
+    "tabs"
   ],
   "action": {
     "default_popup": "popup.html"
