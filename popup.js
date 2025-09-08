@@ -35,32 +35,52 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    // Sort to show the newest recordings first
+    recordings.sort((a, b) => b.id - a.id);
+
     recordings.forEach(rec => {
       const recordingItem = document.createElement('div');
       recordingItem.className = 'recording-item';
-
       const recordingDate = new Date(rec.createdAt).toLocaleString();
-      // Added a class to the button to make it easy to target
+
+      let actionButton;
+      // Conditionally show "Summarize" or "Transcribe" button
+      if (rec.transcript) {
+        actionButton = `<button class="summarize-button" data-id="${rec.id}">Summarize</button>`;
+      } else {
+        actionButton = `<button class="transcribe-button" data-id="${rec.id}">Transcribe</button>`;
+      }
+
       recordingItem.innerHTML = `
         <span>Recording ${rec.id} - ${recordingDate}</span>
-        <button class="transcribe-button" data-id="${rec.id}">Transcribe</button>
+        ${actionButton}
       `;
       recordingsList.appendChild(recordingItem);
     });
   }
 
-  // **NEW CODE BLOCK**
-  // This listens for clicks on any of the "Transcribe" buttons
+  // Event listener for both Transcribe and Summarize buttons
   recordingsList.addEventListener('click', (event) => {
-    if (event.target && event.target.classList.contains('transcribe-button')) {
+    if (event.target && event.target.matches('.transcribe-button')) {
       const recordingId = parseInt(event.target.dataset.id);
-      
-      // Update UI to show that transcription is in progress
       event.target.textContent = 'Transcribing...';
       event.target.disabled = true;
-      
-      // Send message to background script to start transcription
       chrome.runtime.sendMessage({ action: 'transcribeRecording', id: recordingId });
+    }
+
+    if (event.target && event.target.matches('.summarize-button')) {
+      const recordingId = parseInt(event.target.dataset.id);
+      event.target.textContent = 'Summarizing...';
+      event.target.disabled = true;
+      chrome.runtime.sendMessage({ action: 'summarizeRecording', id: recordingId });
+    }
+  });
+
+  // Listen for completion messages from the background script
+  chrome.runtime.onMessage.addListener((message) => {
+    if (message.action === 'transcriptionComplete' || message.action === 'summarizationComplete') {
+        // Refresh the list to update the button states
+        refreshRecordingsList();
     }
   });
 
