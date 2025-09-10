@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderRecordings(recordings) {
-    recordingsList.innerHTML = ''; // Clear the list
+    recordingsList.innerHTML = ''; 
 
     if (!recordings || recordings.length === 0) {
       recordingsList.innerHTML = '<p>No recordings found.</p>';
@@ -40,21 +40,18 @@ document.addEventListener('DOMContentLoaded', () => {
     recordings.forEach(rec => {
       const recordingItem = document.createElement('div');
       recordingItem.className = 'recording-item';
-      
       const recordingDate = new Date(rec.createdAt).toLocaleString();
-      
-      // **KEY CHANGE IS HERE**
-      // Format the size from bytes to KB for display
       const sizeInKB = rec.size ? `${Math.round(rec.size / 1024)} KB` : '';
 
       let actionButton;
-      if (rec.transcript) {
+      if (rec.summary) {
+        actionButton = `<button class="view-button" data-id="${rec.id}">View</button>`;
+      } else if (rec.transcript) {
         actionButton = `<button class="summarize-button" data-id="${rec.id}">Summarize</button>`;
       } else {
         actionButton = `<button class="transcribe-button" data-id="${rec.id}">Transcribe</button>`;
       }
 
-      // Updated to include the sizeInKB variable
       recordingItem.innerHTML = `
         <span>Recording ${rec.id} - ${recordingDate} - <strong>${sizeInKB}</strong></span>
         ${actionButton}
@@ -63,30 +60,37 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Event listener for both Transcribe and Summarize buttons
+  // Event listener for all action buttons
   recordingsList.addEventListener('click', (event) => {
-    if (event.target && event.target.matches('.transcribe-button')) {
-      const recordingId = parseInt(event.target.dataset.id);
-      event.target.textContent = 'Transcribing...';
-      event.target.disabled = true;
-      chrome.runtime.sendMessage({ action: 'transcribeRecording', id: recordingId });
-    }
+    const target = event.target;
+    if (target && target.tagName === 'BUTTON') {
+      const recordingId = parseInt(target.dataset.id);
+      let action = '';
 
-    if (event.target && event.target.matches('.summarize-button')) {
-      const recordingId = parseInt(event.target.dataset.id);
-      event.target.textContent = 'Summarizing...';
-      event.target.disabled = true;
-      chrome.runtime.sendMessage({ action: 'summarizeRecording', id: recordingId });
+      if (target.matches('.transcribe-button')) {
+        target.textContent = 'Transcribing...';
+        action = 'transcribeRecording';
+      } else if (target.matches('.summarize-button')) {
+        target.textContent = 'Summarizing...';
+        action = 'summarizeRecording';
+      } else if (target.matches('.view-button')) {
+        // This opens our details page
+        chrome.tabs.create({ url: `details.html?id=${recordingId}` });
+        return;
+      }
+      
+      target.disabled = true;
+      chrome.runtime.sendMessage({ action: action, id: recordingId });
     }
   });
 
-  // Listen for completion messages from the background script
+  // Listen for completion messages from the background script to auto-refresh
   chrome.runtime.onMessage.addListener((message) => {
     if (message.action === 'transcriptionComplete' || message.action === 'summarizationComplete') {
         refreshRecordingsList();
     }
   });
 
-  // Automatically refresh the list when the popup is opened
+  // Automatically load the recordings when the popup is opened
   refreshRecordingsList();
 });

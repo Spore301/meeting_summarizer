@@ -12,12 +12,21 @@ function blobToBase64(blob) {
 
 async function startRecording() {
   try {
-    // We only need one capture request now.
-    // The user MUST select "Entire Screen" or "Window" and check "Share system audio".
     const stream = await navigator.mediaDevices.getDisplayMedia({
       video: true,
-      audio: true // This will capture system audio when the user allows it.
+      audio: true 
     });
+
+    // **NEW**: Check if an audio track was actually included
+    if (stream.getAudioTracks().length === 0) {
+      // If not, stop the process and log an error.
+      console.error("Recording failed: No audio track was provided. Please ensure 'Share system audio' is checked.");
+      // Stop the video track to remove the browser's "sharing this screen" indicator.
+      stream.getVideoTracks().forEach(track => track.stop());
+      // Close the helper tab.
+      window.close();
+      return; 
+    }
 
     mediaRecorder = new MediaRecorder(stream);
     
@@ -47,7 +56,6 @@ chrome.runtime.onMessage.addListener((message) => {
   if (message.action === 'stopRecording') {
     if (mediaRecorder && mediaRecorder.state === 'recording') {
       mediaRecorder.stop();
-      // Stop all tracks to remove the recording indicators from the browser UI
       mediaRecorder.stream.getTracks().forEach(track => track.stop());
     }
   }

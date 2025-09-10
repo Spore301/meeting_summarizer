@@ -121,3 +121,22 @@ export async function updateRecording(id, newData) {
     };
   });
 }
+
+export async function deleteRecording(id) {
+  const db = await initDB();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction([STORE_NAME], 'readwrite');
+    const store = transaction.objectStore(STORE_NAME);
+    const request = store.delete(id);
+
+    request.onsuccess = () => {
+      console.log(`Recording ${id} deleted successfully.`);
+      resolve();
+    };
+
+    request.onerror = (event) => {
+      console.error(`Error deleting recording ${id}:`, event.target.error);
+      reject('Error deleting recording');
+    };
+  });
+}

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Recording Details</title>
+  <style>
+    /* ... (rest of the style is the same) ... */
+    .header-controls { display: flex; justify-content: space-between; align-items: center; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header-controls">
+      <h1 id="title">Loading Recording...</h1>
+      <button id="downloadButton" style="display: none;">Download Recording</button>
+    </div>
+    
+    <h2>Summary</h2>
+    <pre id="summary" class="placeholder">Loading...</pre>
+
+    <h2>Transcript</h2>
+    <pre id="transcript" class="placeholder">Loading...</pre>
+  </div>
+  <script type="module" src="details.js"></script>
+</body>
+</html>

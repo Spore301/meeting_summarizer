@@ -4,7 +4,6 @@ import { handleTranscription } from './transcriber.js';
 
 let recorderTabId = null;
 
-// Helper function to convert base64 back to a Blob for saving
 function base64ToBlob(dataUrl, mimeType) {
   const byteCharacters = atob(dataUrl.split(',')[1]);
   const byteNumbers = new Array(byteCharacters.length);
@@ -18,16 +17,13 @@ function base64ToBlob(dataUrl, mimeType) {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch (message.action) {
     case 'startRecording':
-      // Open the recorder helper tab
       chrome.tabs.create({ url: chrome.runtime.getURL('recorder.html'), active: true }, (tab) => {
         recorderTabId = tab.id;
       });
       break;
     
     case 'stopRecording':
-      // Send a message to the specific recorder tab to stop
       if (recorderTabId) {
-        // Use tabs.sendMessage as it's directed to a content script or extension page
         chrome.tabs.sendMessage(recorderTabId, { action: 'stopRecording' });
         recorderTabId = null;
       }
