@@ -8,7 +8,14 @@
     "tabs"
   ],
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": {
+      "48": "asset/R-48.png"
+    }
+  },
+  "icons": {
+    "48": "asset/R-48.png",
+    "128": "asset/R-128.png"
   },
   "background": {
     "service_worker": "background.js",

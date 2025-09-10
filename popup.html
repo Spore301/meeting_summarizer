@@ -2,32 +2,49 @@
 <html>
 <head>
   <title>Meeting Summarizer</title>
+    <link rel="stylesheet" href="css/style.css">
   <style>
-    body { font-family: sans-serif; width: 300px; padding: 10px; }
+    @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+    *{
+      font-family: Courier Prime, monospace;
+    }
+    body {width: 300px; padding: 10px; }
     h1 { font-size: 16px; color: #333; }
-    #controls, #header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    #controls{ display: flex; justify-content: flex-start; align-items: flex-start; flex-direction: row;}
+    #header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;}
     #recordingsList { max-height: 300px; overflow-y: auto; border-top: 1px solid #ccc; }
     .recording-item { padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-    .recording-item button { cursor: pointer; }
+    .recording-item button { cursor: pointer; } .popup-body { border-radius: 12px; } .header{display: flex; align-items: center; gap: 10px; justify-content:"flex-start"; margin-bottom: 20px;}
   </style>
 </head>
 <body>
+  <div class="header">
+    <img src="asset/R-128.png" alt="Icon" style="height:24px; border-radius:12px; vertical-align:middle;">
+    <h1>Recordify</h1>
+  </div>
   <div id="controls">
-    <button id="startButton">Start Recording</button>
-    <button id="stopButton">Stop Recording</button>
+      <button id="startButton"><div class="icon-div"></div> Start Recording</button>
+      <button id="stopButton"><div class="icon-div"></div> Stop Recording</button>
   </div>
   <hr>
   <div id="header">
     <h3>Saved Recordings</h3>
-    <button id="refreshButton">Refresh</button>
+    <button id="refreshButton">
+      <img src="asset/refresh.png" alt=".">
+      <p>Refresh</p>
+    </button>
   </div>
   <div id="recordingsList">
     <p>Click Refresh to see your recordings.</p>
   </div>
   
   <hr>
-  <a href="db_viewer.html" target="_blank">Open Database Viewer</a>
-
+  <div class ="footer" style="margin-top: 15px; line-height: 20px;">
+    <a href="options.html" target="_blank"> Settings </a>  |  
+    <a href="instructions.html" target="_blank"> How to Record </a>  |
+    <a href="db_viewer.html" target="_blank"> Open Database Viewer </a>
+  </div>
   <script src="popup.js"></script>
 </body>
 </html>

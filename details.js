@@ -2,9 +2,11 @@ import { getRecordingById } from './db.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const title = document.getElementById('title');
+  const videoPlayer = document.getElementById('videoPlayer');
   const summary = document.getElementById('summary');
   const transcript = document.getElementById('transcript');
-  const downloadButton = document.getElementById('downloadButton');
+  const copySummaryBtn = document.getElementById('copySummary');
+  const copyTranscriptBtn = document.getElementById('copyTranscript');
 
   const urlParams = new URLSearchParams(window.location.search);
   const recordingId = parseInt(urlParams.get('id'));
@@ -19,29 +21,32 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     if (recording) {
       const recordingDate = new Date(recording.createdAt).toLocaleString();
-      title.textContent = `Details for Recording #${recording.id} (${recordingDate})`;
+      title.textContent = `Details for Recording #${recording.id}`;
       
+      // Load the video blob into the player
+      if (recording.blob) {
+        const videoUrl = URL.createObjectURL(recording.blob);
+        videoPlayer.src = videoUrl;
+      }
+
       summary.textContent = recording.summary || 'No summary generated yet.';
       transcript.textContent = recording.transcript || 'No transcript generated yet.';
       
       if(recording.summary) summary.classList.remove('placeholder');
       if(recording.transcript) transcript.classList.remove('placeholder');
 
-      // **NEW DOWNLOAD LOGIC**
-      if (recording.blob) {
-        downloadButton.style.display = 'block'; // Show the button
-        downloadButton.addEventListener('click', () => {
-          const url = URL.createObjectURL(recording.blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `recording-${recording.id}.webm`;
-          document.body.appendChild(a);
-          a.click();
-          // Clean up by removing the link and revoking the URL
-          window.URL.revokeObjectURL(url);
-          a.remove();
-        });
-      }
+      // Add click listeners for copy buttons
+      copySummaryBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(summary.textContent);
+        copySummaryBtn.textContent = 'Copied!';
+        setTimeout(() => { copySummaryBtn.textContent = 'Copy'; }, 2000);
+      });
+
+      copyTranscriptBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(transcript.textContent);
+        copyTranscriptBtn.textContent = 'Copied!';
+        setTimeout(() => { copyTranscriptBtn.textContent = 'Copy'; }, 2000);
+      });
 
     } else {
       title.textContent = `Error: Recording #${recordingId} not found.`;
