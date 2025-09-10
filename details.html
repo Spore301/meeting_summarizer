@@ -3,21 +3,25 @@
 <head>
   <title>Recording Details</title>
   <style>
-    /* ... (rest of the style is the same) ... */
-    .header-controls { display: flex; justify-content: space-between; align-items: center; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; margin: 0; padding: 0; background-color: #f8f9fa; }
+    .container { max-width: 800px; margin: 40px auto; background: white; padding: 20px 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    h1, h2 { color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    h2 button { font-size: 12px; padding: 5px 10px; cursor: pointer; }
+    pre { background-color: #f1f3f5; border: 1px solid #dee2e6; border-radius: 4px; padding: 15px; white-space: pre-wrap; word-wrap: break-word; font-size: 14px; line-height: 1.6; max-height: 400px; overflow-y: auto; }
+    .placeholder { color: #888; font-style: italic; }
+    video { width: 100%; border-radius: 10px; background-color: #000; margin-bottom: 20px; }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="header-controls">
-      <h1 id="title">Loading Recording...</h1>
-      <button id="downloadButton" style="display: none;">Download Recording</button>
-    </div>
+    <h1 id="title">Loading Recording...</h1>
     
-    <h2>Summary</h2>
+    <video id="videoPlayer" controls></video>
+
+    <h2>Summary <button id="copySummary">Copy</button></h2>
     <pre id="summary" class="placeholder">Loading...</pre>
 
-    <h2>Transcript</h2>
+    <h2>Transcript <button id="copyTranscript">Copy</button></h2>
     <pre id="transcript" class="placeholder">Loading...</pre>
   </div>
   <script type="module" src="details.js"></script>
