@@ -55,10 +55,14 @@ async function startRecording() {
 chrome.runtime.onMessage.addListener((message) => {
   if (message.action === 'stopRecording') {
     if (mediaRecorder && mediaRecorder.state === 'recording') {
+
       mediaRecorder.stop();
       mediaRecorder.stream.getTracks().forEach(track => track.stop());
     }
+    else {
+      
+    }
   }
-});
+}); 
 
 startRecording();

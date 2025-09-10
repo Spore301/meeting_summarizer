@@ -1,0 +1,83 @@
+#startButton{
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 14px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 12px;
+
+}
+
+#stopButton {
+    background-color: #f44336; /* Red */
+    border: none;
+    color: white;
+    padding: 14px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 12px;
+}
+
+#refreshButton {
+    background-color: #ffffff; /* Blue */
+    border: 1px solid #000000;
+    color: rgb(0, 0, 0);
+    padding: 2px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#refreshButton:hover{
+    background-color: #eaeaea; /* Blue */
+    border: 1px solid #000000;
+    color: rgb(0, 0, 0);
+    padding: 2px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#refreshButton img {
+    width: 16px;
+    height: 16px;
+}
+
+.header h1 {
+    font-size: 20px;
+    margin: 0;
+}
+
+#controls{
+    padding:10px 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    border-radius: 12px;
+    border: 2px solid #ccc;
+}
+
+
